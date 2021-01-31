@@ -2,10 +2,10 @@
 
 class Database {
 
-        private $host = "localhost:3306";
-        private $db = "blog_react_php";
-        private $user = "root";
-        private $password = "1234";
+        private $host = "us-cdbr-east-03.cleardb.com:3306";
+        private $db = "heroku_63dae8056924b5f";
+        private $user = "ba4e338b01b472";
+        private $password = "36bb9295";
         private $charset = "utf8";
 
     public function __construct(){}
