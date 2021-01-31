@@ -1,0 +1,8 @@
+{
+    "name": "juandev/blog",
+    "description": "prueba tecnica",
+    "minimum-stability": "dev",
+    "require": {
+        "firebase/php-jwt": "9999999-dev"
+    }
+}
