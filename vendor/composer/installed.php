@@ -1,12 +1,12 @@
 <?php return array (
   'root' => 
   array (
-    'pretty_version' => '1.0.0+no-version-set',
-    'version' => '1.0.0.0',
+    'pretty_version' => 'dev-master',
+    'version' => 'dev-master',
     'aliases' => 
     array (
     ),
-    'reference' => NULL,
+    'reference' => 'a258a2b0239969feae0883376f8d2b5df082f97a',
     'name' => 'juandev/blog',
   ),
   'versions' => 
@@ -19,16 +19,16 @@
       array (
         0 => '9999999-dev',
       ),
-      'reference' => '1fae8c46348ed6da8a56deaff282034cb57673e0',
+      'reference' => 'd2113d9b2e0e349796e72d2a63cf9319100382d2',
     ),
     'juandev/blog' => 
     array (
-      'pretty_version' => '1.0.0+no-version-set',
-      'version' => '1.0.0.0',
+      'pretty_version' => 'dev-master',
+      'version' => 'dev-master',
       'aliases' => 
       array (
       ),
-      'reference' => NULL,
+      'reference' => 'a258a2b0239969feae0883376f8d2b5df082f97a',
     ),
   ),
 );

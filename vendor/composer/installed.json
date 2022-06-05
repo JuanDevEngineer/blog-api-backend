@@ -7,12 +7,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/firebase/php-jwt.git",
-                "reference": "1fae8c46348ed6da8a56deaff282034cb57673e0"
+                "reference": "d2113d9b2e0e349796e72d2a63cf9319100382d2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/1fae8c46348ed6da8a56deaff282034cb57673e0",
-                "reference": "1fae8c46348ed6da8a56deaff282034cb57673e0",
+                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/d2113d9b2e0e349796e72d2a63cf9319100382d2",
+                "reference": "d2113d9b2e0e349796e72d2a63cf9319100382d2",
                 "shasum": ""
             },
             "require": {
@@ -21,7 +21,10 @@
             "require-dev": {
                 "phpunit/phpunit": ">=4.8 <=9"
             },
-            "time": "2020-10-26T17:34:38+00:00",
+            "suggest": {
+                "paragonie/sodium_compat": "Support EdDSA (Ed25519) signatures when libsodium is not present"
+            },
+            "time": "2021-06-23T19:00:23+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "source",
@@ -54,7 +57,7 @@
             ],
             "support": {
                 "issues": "https://github.com/firebase/php-jwt/issues",
-                "source": "https://github.com/firebase/php-jwt/tree/master"
+                "source": "https://github.com/firebase/php-jwt/tree/v5.4.0"
             },
             "install-path": "../firebase/php-jwt"
         }

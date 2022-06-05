@@ -23,12 +23,25 @@ class UsuariosModel extends Model
 
                 $stmt = $this->prepareQuery($sql);
 
-                $stmt->bindParam(':nombre', $data['nombre'], PDO::PARAM_STR);
-                $stmt->bindParam(':correo', $data['correo'], PDO::PARAM_STR);
-                $stmt->bindParam(':contrasena', $password_Hash, PDO::PARAM_STR);
-                $stmt->bindParam(':numero_movil', $data['numero_movil'], PDO::PARAM_STR);
-                $stmt->bindParam(':tipo_usuario', $data['tipo_usuario'], PDO::PARAM_INT);
-                $stmt->bindParam(':fecha_creacion', $data['fecha_creacion']);
+                foreach ($data as $key => $value) {
+                    if ($value[$key] == 'tipo_usuario') {
+                        $stmt->bindParam(':'.$value[$key], $value[$key], PDO::PARAM_INT);
+                    }
+                    if ($value[$key] == 'contrasena') {
+                        $stmt->bindParam(':'.$value[$key], $password_Hash, PDO::PARAM_STR);
+                    }
+                    if ($value[$key] == 'fecha_creacion') {
+                        $stmt->bindParam(':'.$value[$key], $value[$key]);
+                    }
+                    $stmt->bindParam($value[$key], $value[$key], PDO::PARAM_STR);
+                }
+
+                // $stmt->bindParam(':nombre', $data['nombre'], PDO::PARAM_STR);
+                // $stmt->bindParam(':correo', $data['correo'], PDO::PARAM_STR);
+                // $stmt->bindParam(':contrasena', $password_Hash, PDO::PARAM_STR);
+                // $stmt->bindParam(':numero_movil', $data['numero_movil'], PDO::PARAM_STR);
+                // $stmt->bindParam(':tipo_usuario', $data['tipo_usuario'], PDO::PARAM_INT);
+                // $stmt->bindParam(':fecha_creacion', $data['fecha_creacion']);
 
                 if ($stmt->execute()) {
                     return array(

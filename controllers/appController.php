@@ -27,9 +27,4 @@ class App
         }
         return $flag;
     }
-
-    protected function saveImage()
-    {
-        
-    }
 }

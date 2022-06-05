@@ -42,12 +42,8 @@ class Categorias extends app {
     public function getAll()
     {
         if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-
             $response = $this->categorias->getAll();
-
-            echo json_encode(array(
-                'data' => $response
-            ));
+            echo json_encode($response);
         } else {
             echo json_encode(array(
                 'status' => 404,
@@ -58,13 +54,10 @@ class Categorias extends app {
 
     public function getOne($param)
     {
-
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $param_id = $param[0];
             $response = $this->categorias->getOne($param_id);
-            echo json_encode(array(
-                'data' => $response
-            ));
+            echo json_encode(array($response));
         } else {
             echo json_encode(array(
                 'success' => 404,
