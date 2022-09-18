@@ -1,5 +1,10 @@
 <?php
 
-class config {
-    
+namespace Config;
+
+class config
+{
+  public function __construct()
+  {
+  }
 }

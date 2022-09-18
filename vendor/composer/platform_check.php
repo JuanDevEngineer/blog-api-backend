@@ -4,8 +4,19 @@
 
 $issues = array();
 
-if (!(PHP_VERSION_ID >= 50300)) {
-    $issues[] = 'Your Composer dependencies require a PHP version ">= 5.3.0". You are running ' . PHP_VERSION  .  '.';
+if (!(PHP_VERSION_ID >= 80000)) {
+    $issues[] = 'Your Composer dependencies require a PHP version ">= 8.0.0". You are running ' . PHP_VERSION  .  '.';
+}
+
+$missingExtensions = array();
+extension_loaded('hash') || $missingExtensions[] = 'hash';
+extension_loaded('json') || $missingExtensions[] = 'json';
+extension_loaded('mbstring') || $missingExtensions[] = 'mbstring';
+extension_loaded('openssl') || $missingExtensions[] = 'openssl';
+extension_loaded('sodium') || $missingExtensions[] = 'sodium';
+
+if ($missingExtensions) {
+    $issues[] = 'Your Composer dependencies require the following PHP extensions to be installed: ' . implode(', ', $missingExtensions);
 }
 
 if ($issues) {

@@ -7,16 +7,86 @@ namespace Composer\Autoload;
 class ComposerStaticInit5346e6d37439c30d94a44265358142d4
 {
     public static $prefixLengthsPsr4 = array (
-        'F' => 
+        'S' => 
         array (
-            'Firebase\\JWT\\' => 13,
+            'StellaMaris\\Clock\\' => 18,
+            'Services\\' => 9,
+        ),
+        'M' => 
+        array (
+            'Models\\' => 7,
+        ),
+        'L' => 
+        array (
+            'Lcobucci\\JWT\\' => 13,
+            'Lcobucci\\Clock\\' => 15,
+        ),
+        'D' => 
+        array (
+            'Daos\\' => 5,
+        ),
+        'C' => 
+        array (
+            'Controllers\\' => 12,
+            'Config\\' => 7,
+        ),
+        'A' => 
+        array (
+            'Auth\\' => 5,
+            'App\\' => 4,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'Firebase\\JWT\\' => 
+        'StellaMaris\\Clock\\' => 
         array (
-            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
+            0 => __DIR__ . '/..' . '/stella-maris/clock/src',
+        ),
+        'Services\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/services',
+        ),
+        'Models\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/models',
+        ),
+        'Lcobucci\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/lcobucci/jwt/src',
+        ),
+        'Lcobucci\\Clock\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/lcobucci/clock/src',
+        ),
+        'Daos\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/daos',
+        ),
+        'Controllers\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/controllers',
+        ),
+        'Config\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/config',
+        ),
+        'Auth\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/auth',
+        ),
+        'App\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/',
+        ),
+    );
+
+    public static $prefixesPsr0 = array (
+        'B' => 
+        array (
+            'Bramus' => 
+            array (
+                0 => __DIR__ . '/..' . '/bramus/router/src',
+            ),
         ),
     );
 
@@ -29,6 +99,7 @@ class ComposerStaticInit5346e6d37439c30d94a44265358142d4
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit5346e6d37439c30d94a44265358142d4::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit5346e6d37439c30d94a44265358142d4::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit5346e6d37439c30d94a44265358142d4::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit5346e6d37439c30d94a44265358142d4::$classMap;
 
         }, null, ClassLoader::class);

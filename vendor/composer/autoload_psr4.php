@@ -6,5 +6,14 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'Firebase\\JWT\\' => array($vendorDir . '/firebase/php-jwt/src'),
+    'StellaMaris\\Clock\\' => array($vendorDir . '/stella-maris/clock/src'),
+    'Services\\' => array($baseDir . '/services'),
+    'Models\\' => array($baseDir . '/models'),
+    'Lcobucci\\JWT\\' => array($vendorDir . '/lcobucci/jwt/src'),
+    'Lcobucci\\Clock\\' => array($vendorDir . '/lcobucci/clock/src'),
+    'Daos\\' => array($baseDir . '/daos'),
+    'Controllers\\' => array($baseDir . '/controllers'),
+    'Config\\' => array($baseDir . '/config'),
+    'Auth\\' => array($baseDir . '/auth'),
+    'App\\' => array($baseDir . '/'),
 );

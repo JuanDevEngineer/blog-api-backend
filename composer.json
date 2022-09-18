@@ -1,8 +1,20 @@
 {
-    "name": "juandev/blog",
-    "description": "prueba tecnica",
-    "minimum-stability": "dev",
-    "require": {
-        "firebase/php-jwt": "9999999-dev"
+  "name": "juandev/blog",
+  "description": "prueba tecnica",
+  "minimum-stability": "dev",
+  "require": {
+    "lcobucci/jwt": "4.3.x-dev",
+    "bramus/router": "~1.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "Auth\\": "./auth/",
+      "Config\\": "./config/",
+      "Controllers\\": "./controllers/",
+      "Models\\": "./models/",
+      "Daos\\": "./daos/",
+      "Services\\": "./services/",
+      "App\\": "./"
     }
+  }
 }
