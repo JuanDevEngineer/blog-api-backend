@@ -63,7 +63,7 @@ class BlogController extends AppController
       //     ));
       //   }
       // }
-      $data = json_decode(file_get_contents('php://input'), true);
+      $data = $this->request();
       $blog = new Blog();
       $blog->id_categoria = $data['id_categoria'];
       $blog->titulo = $data['titulo'];
@@ -87,27 +87,18 @@ class BlogController extends AppController
         ));
       }
     } else {
-      echo json_encode(array(
-        'success' => 404,
-        'msg' => 'error en el metodo de envio',
-      ));
+      echo $this->methodAllowed();
     }
   }
 
   public function findAll()
   {
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-
-      $response = $this->blogService->findAll();
-
       echo json_encode(array(
-        'data' => $response
+        'data' => $this->blogService->findAll()
       ));
     } else {
-      echo json_encode(array(
-        'status' => 404,
-        'msg' => 'error en el metodo de envio',
-      ));
+      echo $this->methodAllowed();
     }
   }
 
@@ -119,10 +110,7 @@ class BlogController extends AppController
         'data' => $response
       ));
     } else {
-      echo json_encode(array(
-        'success' => 404,
-        'msg' => 'error en el metodo de envio',
-      ));
+      echo $this->methodAllowed();
     }
   }
 
@@ -151,10 +139,7 @@ class BlogController extends AppController
         ));
       }
     } else {
-      echo json_encode(array(
-        'success' => 404,
-        'msg' => 'error en el metodo de envio',
-      ));
+      echo $this->methodAllowed();
     }
   }
 
@@ -175,10 +160,7 @@ class BlogController extends AppController
         ));
       }
     } else {
-      echo json_encode(array(
-        'success' => 404,
-        'msg' => 'error en el metodo de envio',
-      ));
+      echo $this->methodAllowed();
     }
   }
 }

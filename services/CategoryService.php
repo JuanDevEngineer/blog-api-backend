@@ -19,7 +19,7 @@ class CategoryService
     return $this->categoryDao->create($category);
   }
 
-  public function findAll()
+  public function findAll(): array
   {
     return $this->categoryDao->findAll();
   }

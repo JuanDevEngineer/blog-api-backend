@@ -26,19 +26,16 @@ class Model
 
   public function validatePassword($password, $passwordData)
   {
-    if (password_verify($password, $passwordData)) {
-      return true;
-    }
-    return false;
+    return password_verify($password, $passwordData);
   }
 
   public function validate($dato, $value)
   {
     switch ($dato) {
       case 'usuario':
-        $sql = "SELECT correo FROM usuarios WHERE correo = :correo";
+        $sql = "SELECT * FROM users WHERE email = :email";
         $stmt = $this->prepareQuery($sql);
-        $stmt->bindParam(':correo', $value, PDO::PARAM_STR);
+        $stmt->bindParam(':email', $value, PDO::PARAM_STR);
         break;
 
       case 'categoria':
@@ -53,12 +50,7 @@ class Model
     }
 
     if ($stmt->execute()) {
-
-      if ($stmt->rowCount() > 0) {
-        return true;
-      } else {
-        return false;
-      }
+      return $stmt->rowCount() > 0;
     } else {
       return false;
     }

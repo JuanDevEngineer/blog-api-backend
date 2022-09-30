@@ -2,6 +2,9 @@
 
 namespace Controllers;
 
+use Models\User;
+use Services\UserService;
+
 class UserController extends AppController
 {
   protected $userService;
@@ -9,101 +12,88 @@ class UserController extends AppController
   public function __construct()
   {
     parent::__construct();
+    $this->userService = new UserService();
   }
 
   public function create()
   {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-      $data = json_decode(file_get_contents("php://input"));
+      $data = $this->request();
 
-      $usuario = array(
-        "nombre" => $data->nombre,
-        "correo" => $data->correo,
-        "password" => $data->password,
-        "numero_movil" => $data->numeroMovil,
-        "tipo_usuario" => $data->tipoUsuario,
-        "fecha_creacion" => $data->fechaCreacion
-      );
+      $user = new User();
+      $user->name = $data['nombre'];
+      $user->email = $data['correo'];
+      $user->password = $data['password'];
+      $user->numberPhone = $data['numeroMovil'];
+      $user->typeUser = $data['tipoUsuario']; // Admin, user
 
-      $response = $this->user->create($usuario);
+      $response = $this->userService->create($user);
 
       if ($response['success']) {
+        http_response_code(201);
         echo json_encode(array(
+          'status' => http_response_code(201),
           'success' => true,
           'msg' => $response['msg'],
         ));
       } else {
+        http_response_code(400);
         echo json_encode(array(
+          'status' => http_response_code(400),
           'success' => false,
           'msg' => $response['msg'],
         ));
       }
     } else {
-      echo json_encode(array(
-        'success' => 404,
-        'msg' => 'error en el metodo de envio',
-      ));
+      echo $this->methodAllowed();
     }
   }
 
-  public function getAll()
+  public function findAll()
   {
-
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-
-      $response = $this->user->getAll();
-
-      echo json_encode(array(
-        'data' => $response
-      ));
+      echo json_encode([
+        'data' => $this->userService->findAll()
+      ]);
     } else {
-      echo json_encode(array(
-        'status' => 404,
-        'msg' => 'error en el metodo de envio',
-      ));
+      echo $this->methodAllowed();
     }
   }
 
-  public function getOne($param)
+  public function findById($id)
   {
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-      $param_id = $param[0];
-      $response = $this->user->getOne($param_id);
-      echo json_encode(array(
-        'data' => $response
-      ));
+      echo json_encode([
+        'data' => $this->userService->findById($id)
+      ]);
     } else {
-      echo json_encode(array(
-        'success' => 404,
-        'msg' => 'error en el metodo de envio',
-      ));
+      echo $this->methodAllowed();
     }
   }
 
-  public function update($param)
+  public function update($id)
   {
 
     if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
 
-      $data = json_decode(file_get_contents("php://input"));
+      $data = $this->request();
 
-      $param_id = "";
+      $user = new User();
+      $user->name = $data['nombre'];
+      $user->email = $data['correo'];
+      $user->numberPhone = $data['numeroMovil'];
+      $user->typeUser = $data['tipoUsuario']; // Admin, user
+      $user->name = $data['nombre'];
+      // $usuario = array(
+      //   "id" => $param_id,
+      //   "nombre" => $data->nombre,
+      //   "numero_movil" => $data->numeroMovil,
+      //   "tipo_usuario" => $data->tipoUsuario,
+      // );
 
-      if (isset($param)) {
-        $param_id = $param[0];
-      }
 
-      $usuario = array(
-        "id" => $param_id,
-        "nombre" => $data->nombre,
-        "numero_movil" => $data->numeroMovil,
-        "tipo_usuario" => $data->tipoUsuario,
-        "fechaActualizacion" => $data->fechaActualizacion
-      );
-
-
-      $response = $this->user->update($usuario);
+      $response = $this->userService->update($user);
 
       if ($response['success']) {
         echo json_encode(array(
@@ -117,25 +107,14 @@ class UserController extends AppController
         ));
       }
     } else {
-      echo json_encode(array(
-        'success' => 404,
-        'msg' => 'error en el metodo de envio',
-      ));
+      echo $this->methodAllowed();
     }
   }
 
-  public function delete($param)
+  public function delete($id)
   {
     if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-
-      $param_id = "";
-
-      if (isset($param)) {
-        $param_id = $param[0];
-      }
-
-      $response = $this->user->delete($param_id);
-
+      $response = $this->userService->delete($id);
       if ($response['success']) {
         echo json_encode(array(
           'success' => true,
@@ -148,10 +127,7 @@ class UserController extends AppController
         ));
       }
     } else {
-      echo json_encode(array(
-        'success' => 404,
-        'msg' => 'error en el metodo de envio',
-      ));
+      echo $this->methodAllowed();
     }
   }
 }

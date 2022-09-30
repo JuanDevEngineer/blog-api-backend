@@ -29,6 +29,16 @@ class UserService
     return $this->daoUser->findById($id);
   }
 
+  public function findByEmail($user)
+  {
+    return $this->daoUser->findByEmail($user);
+  }
+
+  public function existUser(User $user)
+  {
+    return $this->daoUser->existUser($user);
+  }
+
   public function update(User $user)
   {
     return $this->daoUser->update($user);

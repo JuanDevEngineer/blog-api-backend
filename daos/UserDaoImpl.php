@@ -1,6 +1,6 @@
 <?php
 
-namespace Daos\User;
+namespace Daos;
 
 use PDO;
 use PDOException;
@@ -17,41 +17,44 @@ class UserDaoImpl extends Model implements Repository
     parent::__construct();
   }
 
+  public function register(User $user)
+  {
+  }
+
   public function create(User $user)
   {
     try {
 
-      if (!$this->validate('usuario', $user->correo)) {
+      if (!$this->validate('usuario', $user->email)) {
 
         $password_Hash = $this->hashPassword($user->password);
 
-        $sql = "INSERT INTO usuarios (nombre, correo, contrasena, numero_movil, tipo_usuario, fecha_creacion)
-                        VALUES(:nombre, :correo, :contrasena, :numero_movil, :tipo_usuario, :fecha_creacion)";
+        $sql = "INSERT INTO users (name, email, password, phone, tipo_id, created_at)
+                        VALUES(:nombre, :correo, :contrasena, :numero_movil, :tipo_usuario, CURRENT_TIMESTAMP())";
 
         $stmt = $this->prepareQuery($sql);
 
-        $stmt->bindParam(':nombre', $user->nombre, PDO::PARAM_STR);
-        $stmt->bindParam(':correo', $user->correo, PDO::PARAM_STR);
+        $stmt->bindParam(':nombre', $user->name, PDO::PARAM_STR);
+        $stmt->bindParam(':correo', $user->email, PDO::PARAM_STR);
         $stmt->bindParam(':contrasena', $password_Hash, PDO::PARAM_STR);
-        $stmt->bindParam(':numero_movil', $user->numero_movil, PDO::PARAM_STR);
-        $stmt->bindParam(':tipo_usuario', $user->tipo_usuario, PDO::PARAM_INT);
-        $stmt->bindParam(':fecha_creacion', $user->fecha_creacion);
+        $stmt->bindParam(':numero_movil', $user->numberPhone, PDO::PARAM_STR);
+        $stmt->bindParam(':tipo_usuario', $user->typeUser, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
           return array(
             "success" => true,
-            "msg" => 'usuario registrado'
+            "msg" => 'User created successfull'
           );
         } else {
           return array(
             "success" => false,
-            "msg" => 'error al registrar el usuario'
+            "msg" => 'Error to register user'
           );
         }
       } else {
         return array(
           "success" => false,
-          "msg" => 'el correo ya existe'
+          "msg" => 'Email already exists'
         );
       }
     } catch (PDOException $e) {
@@ -131,6 +134,37 @@ class UserDaoImpl extends Model implements Repository
       }
     } catch (PDOException $e) {
       return array(
+        'msg' => $e->getMessage()
+      );
+    }
+  }
+
+  public function existUser(User $user)
+  {
+    return $this->validate('usuario', $user->email);
+  }
+
+  public function findByEmail(User $user)
+  {
+    try {
+      $sql = "SELECT u.id, u.name, u.email, u.password, u.tipo_id, t.nombre as rol FROM users u
+              INNER JOIN tipos_usuarios t ON t.id = u.tipo_id
+              WHERE u.email = :email";
+
+      $stmt = $this->prepareQuery($sql);
+      $stmt->bindParam(':email', $user->email, PDO::PARAM_STR);
+
+      if ($stmt->execute()) {
+        if ($stmt->rowCount() > 0) {
+          $data = $stmt->fetch();
+          return array('success' => false, 'data' => $data);
+        } else {
+          return array();
+        }
+      }
+    } catch (PDOException $e) {
+      return array(
+        'success' => false,
         'msg' => $e->getMessage()
       );
     }

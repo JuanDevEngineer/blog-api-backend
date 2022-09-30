@@ -2,6 +2,9 @@
 
 namespace Controllers;
 
+use Models\Category;
+use Services\CategoryService;
+
 class CategoryController extends AppController
 {
   protected $categoryService;
@@ -9,14 +12,17 @@ class CategoryController extends AppController
   public function __construct()
   {
     parent::__construct();
+    $this->categoryService = new CategoryService();
   }
 
   public function create()
   {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-      $data = json_decode(file_get_contents("php://input"));
+      $data = $this->request();
+      $category = new Category();
+      $category->name = $data['name'];
 
-      $response = $this->categorias->create($data->categoria);
+      $response = $this->categoryService->create($category);
 
       if ($response['success']) {
         echo json_encode(array(
@@ -30,60 +36,44 @@ class CategoryController extends AppController
         ));
       }
     } else {
-      echo json_encode(array(
-        'success' => 404,
-        'msg' => 'error en el metodo de envio',
-      ));
+      echo $this->methodAllowed();
     }
   }
 
-  public function getAll()
+  public function findAll()
   {
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-      $response = $this->categorias->getAll();
-      echo json_encode($response);
+      echo json_encode([
+        'data' => $this->categoryService->findAll()
+      ]);
     } else {
-      echo json_encode(array(
-        'status' => 404,
-        'msg' => 'error en el metodo de envio',
-      ));
+      echo $this->methodAllowed();
     }
   }
 
-  public function getOne($param)
+  public function findById($id)
   {
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-      $param_id = $param[0];
-      $response = $this->categorias->getOne($param_id);
-      echo json_encode(array($response));
+      echo json_encode([
+        "category" => $this->categoryService->findById($id)
+      ]);
     } else {
-      echo json_encode(array(
-        'success' => 404,
-        'msg' => 'error en el metodo de envio',
-      ));
+      echo $this->methodAllowed();
     }
   }
 
-  public function update($param)
+  public function update($id)
   {
 
     if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
 
-      $data = json_decode(file_get_contents("php://input"));
+      $data = $this->request();
+      $category = new Category();
 
-      $param_id = "";
+      $category->id = $id;
+      $category->name = $data['name'];
 
-      if (isset($param)) {
-        $param_id = $param[0];
-      }
-
-      $usuario = array(
-        "id_categoria" => $param_id,
-        "nombre" => $data->nombre,
-      );
-
-
-      $response = $this->categorias->update($usuario);
+      $response = $this->categoryService->update($category);
 
       if ($response['success']) {
         echo json_encode(array(

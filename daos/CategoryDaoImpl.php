@@ -1,6 +1,6 @@
 <?php
 
-namespace Daos\Category;
+namespace Daos;
 
 use PDO;
 use PDOException;
@@ -21,8 +21,8 @@ class CategoryDaoImpl extends Model implements Repository
   {
     try {
       if (!$this->validate('categoria', $category->name)) {
-        $sql = "INSERT INTO categorias (nombre)
-                VALUES(:nombre)";
+        $sql = "INSERT INTO categorias (nombre, created_at, updated_at)
+                VALUES(:nombre, CURRENT_TIMESTAMP(), NULL)";
 
         $stmt = $this->prepareQuery($sql);
 
@@ -57,7 +57,7 @@ class CategoryDaoImpl extends Model implements Repository
   {
     try {
 
-      $sql = "SELECT * FROM categorias";
+      $sql = "SELECT id, nombre FROM categorias";
 
       $stmt = $this->prepareQuery($sql);
 
@@ -80,8 +80,8 @@ class CategoryDaoImpl extends Model implements Repository
   public function findById($id)
   {
     try {
-      $sql = "SELECT * FROM categorias
-                    WHERE id_categoria = :id";
+      $sql = "SELECT id, nombre FROM categorias
+                    WHERE id = :id";
       $stmt = $this->prepareQuery($sql);
       $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
@@ -105,24 +105,24 @@ class CategoryDaoImpl extends Model implements Repository
   {
     try {
       $sql = "UPDATE categorias
-                    SET nombre = :nombre,
-                    WHERE id_categoria = :id";
+                    SET nombre = ?, updated_at = CURRENT_TIMESTAMP()
+                    WHERE id = ?";
 
       $stmt = $this->prepareQuery($sql);
 
-      $stmt->bindParam(':nombre', $category->name, PDO::PARAM_STR);
-      $stmt->bindParam(':id', $category->id_categoria, PDO::PARAM_INT);
+      $stmt->bindParam(1, $category->name, PDO::PARAM_STR);
+      $stmt->bindParam(2, $category->id, PDO::PARAM_INT);
 
       if ($stmt->execute()) {
         if ($stmt->rowCount() > 0) {
           return array(
             "success" => true,
-            "msg" => 'categoria actualizado'
+            "msg" => 'Categoria actualizado'
           );
         } else {
           return array(
             "success" => false,
-            "msg" => 'error al actualizar la categoria'
+            "msg" => 'Error al actualizar la categoria'
           );
         }
       }
