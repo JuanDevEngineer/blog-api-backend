@@ -24,7 +24,6 @@ class UserDaoImpl extends Model implements Repository
   public function create(User $user)
   {
     try {
-
       if (!$this->validate('usuario', $user->email)) {
 
         $password_Hash = $this->hashPassword($user->password);
@@ -58,6 +57,7 @@ class UserDaoImpl extends Model implements Repository
         );
       }
     } catch (PDOException $e) {
+      header('HTTP/1.1 500 Internal Server Error');
       return array(
         'success' => false,
         'msg' => $e->getMessage()
@@ -68,21 +68,20 @@ class UserDaoImpl extends Model implements Repository
   public function findAll()
   {
     try {
-
       $sql = "SELECT
                     u.id,
-                    u.nombre,
-                    u.correo,
-                    u.numero_movil,
-                    u.tipo_usuario,
+                    u.name,
+                    u.email,
+                    u.phone,
+                    u.tipo_id,
                     tu.nombre as 'tipo',
-                    u.fecha_creacion,
+                    u.created_at,
                     CASE
-                        WHEN u.fecha_actualizacion THEN u.fecha_actualizacion
+                        WHEN u.updated_at THEN u.updated_at
                         ELSE 'N/A'
                     END as 'fecha_actualiza'
-                    FROM usuarios u
-                    INNER JOIN tipo_usuarios tu ON tu.id_tipo = u.tipo_usuario";
+                    FROM users u
+                    INNER JOIN tipos_usuarios tu ON tu.id = u.tipo_id";
 
       $stmt = $this->prepareQuery($sql);
 
@@ -95,7 +94,9 @@ class UserDaoImpl extends Model implements Repository
         }
       }
     } catch (PDOException $e) {
+      header('HTTP/1.1 500 Internal Server Error');
       return array(
+        'success' => false,
         'msg' => $e->getMessage()
       );
     }
@@ -107,18 +108,18 @@ class UserDaoImpl extends Model implements Repository
 
       $sql = "SELECT
                     u.id,
-                    u.nombre,
-                    u.correo,
-                    u.numero_movil,
-                    u.tipo_usuario,
+                    u.name,
+                    u.email,
+                    u.phone,
+                    u.tipo_id,
                     tu.nombre as 'tipo',
-                    u.fecha_creacion,
+                    u.updated_at,
                     CASE
-                        WHEN u.fecha_actualizacion THEN u.fecha_actualizacion
+                        WHEN u.updated_at THEN u.updated_at
                         ELSE 'N/A'
                     END as 'fecha_ac'
-                    FROM usuarios u
-                    INNER JOIN tipo_usuarios tu ON tu.id_tipo = u.tipo_usuario
+                    FROM users u
+                    INNER JOIN tipos_usuarios tu ON tu.id = u.tipo_id
                     WHERE u.id = :id";
 
       $stmt = $this->prepareQuery($sql);
@@ -133,7 +134,9 @@ class UserDaoImpl extends Model implements Repository
         }
       }
     } catch (PDOException $e) {
+      header('HTTP/1.1 500 Internal Server Error');
       return array(
+        'success' => false,
         'msg' => $e->getMessage()
       );
     }
@@ -141,7 +144,15 @@ class UserDaoImpl extends Model implements Repository
 
   public function existUser(User $user)
   {
-    return $this->validate('usuario', $user->email);
+    try {
+      return $this->validate('usuario', $user->email);
+    } catch (PDOException $e) {
+      header('HTTP/1.1 500 Internal Server Error');
+      return array(
+        'success' => false,
+        'msg' => $e->getMessage()
+      );
+    }
   }
 
   public function findByEmail(User $user)
@@ -163,6 +174,7 @@ class UserDaoImpl extends Model implements Repository
         }
       }
     } catch (PDOException $e) {
+      header('HTTP/1.1 500 Internal Server Error');
       return array(
         'success' => false,
         'msg' => $e->getMessage()
@@ -173,36 +185,36 @@ class UserDaoImpl extends Model implements Repository
   public function update(User $user)
   {
     try {
-      $sql = "UPDATE usuarios u
+      $sql = "UPDATE users u
                     SET
-                    u.nombre = :nombre,
-                    u.numero_movil = :numero_movil,
-                    u.tipo_usuario = :tipo_usuario,
-                    u.fecha_actualizacion = :fecha_actualizacion
+                    u.name = :nombre,
+                    u.phone = :numero_movil,
+                    u.tipo_id = :tipo_usuario,
+                    u.updated_at = CURRENT_TIMESTAMP()
                     WHERE u.id = :id";
 
       $stmt = $this->prepareQuery($sql);
 
-      $stmt->bindParam(':nombre', $user->nombre, PDO::PARAM_STR);
-      $stmt->bindParam(':numero_movil', $user->numero_movil, PDO::PARAM_STR);
-      $stmt->bindParam(':tipo_usuario', $user->tipo_usuario, PDO::PARAM_INT);
-      $stmt->bindParam(':fecha_actualizacion', $user->fechaActualizacion);
+      $stmt->bindParam(':nombre', $user->name, PDO::PARAM_STR);
+      $stmt->bindParam(':numero_movil', $user->numberPhone, PDO::PARAM_STR);
+      $stmt->bindParam(':tipo_usuario', $user->typeUser, PDO::PARAM_INT);
       $stmt->bindParam(':id', $user->id, PDO::PARAM_INT);
 
       if ($stmt->execute()) {
         if ($stmt->rowCount() > 0) {
           return array(
             "success" => true,
-            "msg" => 'usuario actualizado'
+            "msg" => 'User updated successfull'
           );
         } else {
           return array(
             "success" => false,
-            "msg" => 'error al actualizar el usuario'
+            "msg" => 'Error updating user'
           );
         }
       }
     } catch (PDOException $e) {
+      header('HTTP/1.1 500 Internal Server Error');
       return array(
         'success' => false,
         'msg' => $e->getMessage()
@@ -213,11 +225,7 @@ class UserDaoImpl extends Model implements Repository
   public function delete($id)
   {
     try {
-
-      $sql = "DELETE 
-                    FROM usuarios
-                    WHERE id = :id";
-
+      $sql = "DELETE FROM users WHERE id = :id";
       $stmt = $this->prepareQuery($sql);
       $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
@@ -225,16 +233,17 @@ class UserDaoImpl extends Model implements Repository
         if ($stmt->rowCount() > 0) {
           return array(
             "success" => true,
-            "msg" => 'usuario eliminado'
+            "msg" => 'User deleted successfull'
           );
         } else {
           return array(
             "success" => false,
-            "msg" => 'error al eliminar el usuario'
+            "msg" => 'Error deleting user'
           );
         }
       }
     } catch (PDOException $e) {
+      header('HTTP/1.1 500 Internal Server Error');
       return array(
         'success' => false,
         'msg' => $e->getMessage()

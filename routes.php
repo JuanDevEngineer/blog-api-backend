@@ -1,6 +1,15 @@
 <?php
 
 use \Bramus\Router\Router;
+use \Services\JwtService;
+
+// send some CORS headers so the API can be called from anywhere
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
+header("X-Requested-With: XMLHttpRequest");
+header("Access-Control-Allow-Methods: OPTIONS, GET, POST, PUT, PATCH, DELETE");
+header("Access-Control-Max-Age: 3600");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 // Create Router instance
 $router = new Router();
@@ -15,17 +24,11 @@ $router->post('/auth/sign-in', 'AuthController@login');
 $router->post('/auth/sign-up', 'AuthController@register');
 
 // Define routes middleware
-// $router->before('GET|POST|PUT|DELETE', '/api/.*', function () {
-//   if (!isset($_SESSION['user'])) {
-//     header('http/1.0 401 unauthorized');
-//     // header('HTTP/1.1 403 Forbidden');
-//     header('Content-Type: application/json');
-//     echo json_encode([
-//       'status' => 403,
-//       'statusMessages' => 'Access denied',
-//       'msg' => 'User not authenticated'
-//     ]);
-//     exit();
+// $router->before('GET|POST|PUT|PATCH|DELETE', '/api/.*', function () {
+//   header('Content-Type: application/json');
+//   if (JwtService::getToken() == NULL || JwtService::getToken() == "") {
+//     echo "Token not found in request";
+//     die();
 //   }
 // });
 

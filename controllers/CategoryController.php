@@ -19,21 +19,25 @@ class CategoryController extends AppController
   {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       $data = $this->request();
+
+      if (!isset($data['name'])) {
+        echo $this->methodBadRequest('All fields are requireds, no recevied fields json');
+        die();
+      }
+
+      if (empty($data['name'])) {
+        echo $this->methodBadRequest('All fields are requireds');
+        die();
+      }
+
       $category = new Category();
       $category->name = $data['name'];
 
       $response = $this->categoryService->create($category);
-
       if ($response['success']) {
-        echo json_encode(array(
-          'success' => true,
-          'msg' => $response['msg'],
-        ));
+        echo $this->methodCreated($response['msg']);
       } else {
-        echo json_encode(array(
-          'success' => false,
-          'msg' => $response['msg'],
-        ));
+        echo $this->methodBadRequest($response['msg']);
       }
     } else {
       echo $this->methodAllowed();
@@ -43,9 +47,7 @@ class CategoryController extends AppController
   public function findAll()
   {
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-      echo json_encode([
-        'data' => $this->categoryService->findAll()
-      ]);
+      echo $this->methodOk("", $this->categoryService->findAll());
     } else {
       echo $this->methodAllowed();
     }
@@ -54,9 +56,13 @@ class CategoryController extends AppController
   public function findById($id)
   {
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-      echo json_encode([
-        "category" => $this->categoryService->findById($id)
-      ]);
+
+      if (count($this->categoryService->findById($id)) == 0) {
+        echo $this->methodNotFound("category by Id {$id} not found");
+        die();
+      }
+
+      echo $this->methodOk("", $this->categoryService->findById($id));
     } else {
       echo $this->methodAllowed();
     }
@@ -64,10 +70,19 @@ class CategoryController extends AppController
 
   public function update($id)
   {
-
     if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-
       $data = $this->request();
+
+      if (!isset($data['name'])) {
+        echo $this->methodBadRequest('All fields are requireds, no recevied fields json');
+        die();
+      }
+
+      if (empty($data['name'])) {
+        echo $this->methodBadRequest('All fields are requireds');
+        die();
+      }
+
       $category = new Category();
 
       $category->id = $id;
@@ -76,52 +91,27 @@ class CategoryController extends AppController
       $response = $this->categoryService->update($category);
 
       if ($response['success']) {
-        echo json_encode(array(
-          'success' => true,
-          'msg' => $response['msg'],
-        ));
+        echo $this->methodOk($response['msg']);
       } else {
-        echo json_encode(array(
-          'success' => false,
-          'msg' => $response['msg'],
-        ));
+        echo $this->methodBadRequest($response['msg']);
       }
     } else {
-      echo json_encode(array(
-        'success' => 404,
-        'msg' => 'error en el metodo de envio',
-      ));
+      echo $this->methodAllowed();
     }
   }
 
-  public function delete($param)
+  public function delete($id)
   {
     if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-
-      $param_id = "";
-
-      if (isset($param)) {
-        $param_id = $param[0];
-      }
-
-      $response = $this->categorias->delete($param_id);
+      $response = $this->categoryService->delete($id);
 
       if ($response['success']) {
-        echo json_encode(array(
-          'success' => true,
-          'msg' => $response['msg'],
-        ));
+        echo $this->methodOk($response['msg']);
       } else {
-        echo json_encode(array(
-          'success' => false,
-          'msg' => $response['msg'],
-        ));
+        echo $this->methodBadRequest($response['msg']);
       }
     } else {
-      echo json_encode(array(
-        'success' => 404,
-        'msg' => 'error en el metodo de envio',
-      ));
+      echo $this->methodAllowed();
     }
   }
 }

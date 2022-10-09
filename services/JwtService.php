@@ -86,7 +86,7 @@ class JwtService
     $decoded = null;
     // if ($jwt) {
     try {
-      $decoded = JWT::decode($token, new Key($this->privateKey, 'HS256'));
+      JWT::decode($token, new Key($this->privateKey, 'HS256'));
     } catch (\Exception $e) {
       if ($e instanceof UnexpectedValueException) {
         echo "entrando";
@@ -108,15 +108,10 @@ class JwtService
 
       echo $e->getMessage();
     }
-    // }
+  }
 
-    return $decoded;
+  public static function getToken()
+  {
+    return isset($_SERVER['HTTP_AUTHORIZATION']);
   }
 }
-
-// $token = new JwtService(1);
-
-// $currentToken = $token->generateToken();
-
-// $decode = $token->decodeToken($currentToken);
-// print_r($decode);

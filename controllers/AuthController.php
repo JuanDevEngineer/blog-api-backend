@@ -45,37 +45,29 @@ class AuthController extends AppController
       $existEmail = $this->userService->existUser($user);
 
       if (!$existEmail) {
-        $this->methodBadRequest();
-        echo json_encode([
-          'status' => http_response_code(400),
-          'message' => 'Error in your email or password',
-          'data' => NULL
-        ]);
+        echo $this->methodBadRequest('Error in your email or password');
         die();
       }
 
       $userResponse = $this->userService->findByEmail($user);
       $hash = $userResponse['data']['password'];
       if (!$this->validatePassword($data['password'], $hash)) {
-        $this->methodBadRequest();
-        echo json_encode([
-          'status' => http_response_code(400),
-          'message' => 'Error in your password',
-          'data' => NULL
-        ]);
+        echo $this->methodBadRequest('Error in your email or password');
         die();
       }
 
       $jwtService = new JwtService($userResponse['data']['id']);
-      $this->methodOk();
-      echo json_encode([
-        'data' => [
-          'name' => $userResponse['data']['name'],
-          'email' => $userResponse['data']['email'],
-          'rol' => $userResponse['data']['rol'],
+      echo $this->methodOk(
+        "",
+        [
+          'user' => [
+            'name' => $userResponse['data']['name'],
+            'email' => $userResponse['data']['email'],
+            'rol' => $userResponse['data']['rol'],
+          ],
+          'token' => $jwtService->generateToken()
         ],
-        'token' => $jwtService->generateToken()
-      ]);
+      );
     } else {
       echo $this->methodAllowed();
     }
