@@ -17,74 +17,33 @@ class BlogController extends AppController
 
   public function create()
   {
-    $path = "uploads/blogs/";
-
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-      // if (isset($_FILES) && isset($_FILES['blog']['name'])) {
-      //   $nombre_archivo = $_FILES['blog']['name'];
-      //   $tipo = $_FILES['blog']['type'];
-      //   $tmp_name = $_FILES['blog']['tmp_name'];
-      //   $error =  $_FILES['blog']['error'];
-      //   $size = $_FILES['blog']['size'];
-
-      //   if ($this->validateFormatImage($tipo)) {
-
-      //     if ($error === 0) {
-
-      //       if ($this->validateSize($size)) {
-
-      //         //separar la imagen  [nombre => 0] . ['jpg' => 1]
-      //         $nombreext = explode('.', $nombre_archivo);
-      //         // estraer el jpg
-      //         $nombreacext = strtolower(end($nombreext));
-
-      //         // cambio de el nombre
-      //         $nombre_guardar = uniqid('', true) . "." . $nombreacext;
-
-      //         $nombre_imagen = dirname(__DIR__) . "\\" . $path . $nombre_guardar;
-
-      //         move_uploaded_file($tmp_name, $path . $nombre_guardar);
-      //       } else {
-      //         echo json_encode(array(
-      //           'success' => false,
-      //           'msg' => 'error en el tamaño',
-      //         ));
-      //       }
-      //     } else {
-      //       echo json_encode(array(
-      //         'success' => false,
-      //         'msg' => 'error al subir el archivo',
-      //       ));
-      //     }
-      //   } else {
-      //     echo json_encode(array(
-      //       'success' => false,
-      //       'msg' => 'error en tipo',
-      //     ));
-      //   }
-      // }
-      $data = $this->request();
-      $blog = new Blog();
-      $blog->id_categoria = $data['id_categoria'];
-      $blog->titulo = $data['titulo'];
-      $blog->slug = $data['slug'];
-      $blog->texto_corto = $data['texto_corto'];
-      $blog->texto_largo = $data['texto_largo'];
-      $blog->url_imagen = $nombre_imagen ?? '';
-      $blog->fecha_creacion = date("Y-m-d H:i:s", time());
+    if ($this->allowRequestMethod('POST')) {
+      if (!$this->acceptsJson()) {
+        $image_path = $this->saveFile();
+        $blog = new Blog();
+        $blog->category_id = $_POST['category_id'];
+        $blog->title = $_POST['title'];
+        $blog->slug = $_POST['slug'];
+        $blog->text_short = $_POST['text_short'];
+        $blog->text_large = $_POST['text_large'];
+        $blog->path_image = $image_path ?? '';
+      } else {
+        $data = $this->request();
+        $blog = new Blog();
+        $blog->category_id = $data['category_id'];
+        $blog->title = $data['title'];
+        $blog->slug = $data['slug'];
+        $blog->text_short = $data['text_short'];
+        $blog->text_large = $data['text_large'];
+        $blog->path_image = $image_path ?? '';
+      }
 
       $response = $this->blogService->create($blog);
 
       if ($response['success']) {
-        echo json_encode(array(
-          'success' => true,
-          'msg' => $response['msg'],
-        ));
+        echo $this->methodCreated($response['msg']);
       } else {
-        echo json_encode(array(
-          'success' => false,
-          'msg' => $response['msg'],
-        ));
+        echo $this->methodBadRequest($response['msg']);
       }
     } else {
       echo $this->methodAllowed();
@@ -93,10 +52,8 @@ class BlogController extends AppController
 
   public function findAll()
   {
-    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-      echo json_encode(array(
-        'data' => $this->blogService->findAll()
-      ));
+    if ($this->allowRequestMethod()) {
+      echo $this->methodOk("", $this->blogService->findAll());
     } else {
       echo $this->methodAllowed();
     }
@@ -104,11 +61,12 @@ class BlogController extends AppController
 
   public function findById($id)
   {
-    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-      $response = $this->blogService->findById($id);
-      echo json_encode(array(
-        'data' => $response
-      ));
+    if ($this->allowRequestMethod()) {
+      if (count($this->blogService->findById($id)) === 0) {
+        echo $this->methodNotFound("Blog by id {$id} not found");
+        die();
+      }
+      echo $this->methodOk("", $this->blogService->findById($id));
     } else {
       echo $this->methodAllowed();
     }
@@ -116,27 +74,22 @@ class BlogController extends AppController
 
   public function update($id)
   {
-    if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+    if ($this->allowRequestMethod('PUT')) {
       $data = $this->request();
       $blog = new Blog();
       $blog->id = $id;
-      $blog->titulo = $data['titulo'];
+      $blog->category_id = $data['category_id'];
+      $blog->title = $data['title'];
       $blog->slug = $data['slug'];
-      $blog->texto_corto = $data['texto_corto'];
-      $blog->fecha_actualizacion = date("Y-m-d H:i:s", time());
+      $blog->text_short = $data['text_short'];
+      $blog->text_large = $data['text_large'];
 
       $response = $this->blogService->update($blog);
 
       if ($response['success']) {
-        echo json_encode(array(
-          'success' => true,
-          'msg' => $response['msg'],
-        ));
+        echo $this->methodOk($response['msg']);
       } else {
-        echo json_encode(array(
-          'success' => false,
-          'msg' => $response['msg'],
-        ));
+        echo $this->methodBadRequest($response['msg']);
       }
     } else {
       echo $this->methodAllowed();
@@ -145,22 +98,56 @@ class BlogController extends AppController
 
   public function delete($id)
   {
-    if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    if ($this->allowRequestMethod('DELETE')) {
       $response = $this->blogService->delete($id);
-
       if ($response['success']) {
-        echo json_encode(array(
-          'success' => true,
-          'msg' => $response['msg'],
-        ));
+        echo $this->methodOk($response['msg']);
       } else {
-        echo json_encode(array(
-          'success' => false,
-          'msg' => $response['msg'],
-        ));
+        echo $this->methodBadRequest($response['msg']);
       }
     } else {
       echo $this->methodAllowed();
+    }
+  }
+
+  private function saveFile()
+  {
+    $path = "public/uploads/blogs/";
+    if (isset($_FILES) && isset($_FILES['blog']['name'])) {
+      $nombre_archivo = $_FILES['blog']['name'];
+      $tipo = $_FILES['blog']['type'];
+      $tmp_name = $_FILES['blog']['tmp_name'];
+      $error =  $_FILES['blog']['error'];
+      $size = $_FILES['blog']['size'];
+
+      if ($this->validateFormatImage($tipo)) {
+
+        if ($error === 0) {
+          if ($this->validateSize($size)) {
+            //separar la imagen  [nombre => 0] . ['jpg' => 1]
+            $nombreext = explode('.', $nombre_archivo);
+            // estraer el jpg
+            $nombreacext = strtolower(end($nombreext));
+
+            // cambio de el nombre
+            $nombre_guardar = uniqid('', true) . "." . $nombreacext;
+
+            $image_path = $path . $nombre_guardar;
+            move_uploaded_file($tmp_name, $path . $nombre_guardar);
+
+            return $image_path;
+          } else {
+            echo $this->methodBadRequest('Error in size file');
+            die();
+          }
+        } else {
+          echo $this->methodBadRequest('Error to upload file');
+          die();
+        }
+      } else {
+        echo $this->methodBadRequest('Error in the type file');
+        die();
+      }
     }
   }
 }

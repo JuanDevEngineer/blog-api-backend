@@ -17,15 +17,15 @@ class UserController extends AppController
 
   public function create()
   {
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($this->allowRequestMethod('POST')) {
       $data = $this->request();
 
-      if (!isset($data['nombre']) || !isset($data['correo']) || !isset($data['password']) || !isset($data['numeroMovil']) || !isset($data['tipoUsuario'])) {
+      if (!isset($data['name']) || !isset($data['email']) || !isset($data['password']) || !isset($data['numberPhone']) || !isset($data['rolId'])) {
         echo $this->methodBadRequest('All fields are requireds, no recevied fields json');
         die();
       }
 
-      if (!filter_var($data['correo'], FILTER_VALIDATE_EMAIL)) {
+      if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
         echo $this->methodBadRequest('Enter a valid email address');
         die();
       }
@@ -35,22 +35,22 @@ class UserController extends AppController
         die();
       }
 
-      if (strlen($data['numeroMovil']) < 10) {
+      if (strlen($data['numberPhone']) < 10) {
         echo $this->methodBadRequest('Minimun numbers is 10');
         die();
       }
 
-      if (empty($data['nombre']) || empty($data['correo']) || empty($data['password']) || empty($data['numeroMovil']) || $data['tipoUsuario'] < 1) {
+      if (empty($data['name']) || empty($data['email']) || empty($data['password']) || empty($data['numberPhone']) || $data['rolId'] < 1) {
         echo $this->methodBadRequest('All fields are requireds');
         die();
       }
 
       $user = new User();
-      $user->name = $data['nombre'];
-      $user->email = $data['correo'];
+      $user->name = $data['name'];
+      $user->email = $data['email'];
       $user->password = $data['password'];
-      $user->numberPhone = $data['numeroMovil'];
-      $user->typeUser = $data['tipoUsuario']; // Admin, user
+      $user->numberPhone = $data['numberPhone'];
+      $user->typeUser = $data['rolId']; // Admin, user, etc...
 
       $response = $this->userService->create($user);
       if ($response['success']) {
@@ -91,26 +91,27 @@ class UserController extends AppController
     if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
       $data = $this->request();
 
-      if (!isset($data['nombre']) || !isset($data['numeroMovil']) || !isset($data['tipoUsuario'])) {
+      if (!isset($data['name']) || !isset($data['numberPhone']) || !isset($data['rolId'])) {
         echo $this->methodBadRequest('All fields are requireds, no recevied fields json');
         die();
       }
 
-      if (strlen($data['numeroMovil']) < 10) {
+      if (strlen($data['numberPhone']) < 10) {
         echo $this->methodBadRequest('Minimun numbers is 10');
         die();
       }
 
-      if (empty($data['nombre']) || empty($data['numeroMovil']) || $data['tipoUsuario'] < 1) {
+      if (empty($data['name']) || empty($data['numberPhone']) || $data['rolId'] < 1) {
         echo $this->methodBadRequest('All fields are requireds');
         die();
       }
 
       $user = new User();
       $user->id = $id;
-      $user->name = $data['nombre'];
-      $user->numberPhone = $data['numeroMovil'];
-      $user->typeUser = $data['tipoUsuario']; // Admin, user
+      $user->name = $data['name'];
+      $user->numberPhone = $data['numberPhone'];
+      $user->state = $data['state'];
+      $user->typeUser = $data['rolId']; // Admin, user, etc...
 
       $response = $this->userService->update($user);
 

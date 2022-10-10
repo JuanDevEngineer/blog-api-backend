@@ -20,10 +20,12 @@ class RoleDaoImpl extends Model implements Repository
   public function create(Role $rol)
   {
     try {
-      $sql = "INSERT INTO tipos_usuarios(nombre, created_at) VALUES(:nombre, CURRENT_TIMESTAMP())";
+      $sql = "INSERT INTO roles(name, created_at) VALUES(:name, CURRENT_TIMESTAMP())";
       $stmt = $this->prepareQuery($sql);
 
-      $stmt->bindParam(':nombre', strtoupper($rol->name), PDO::PARAM_STR);
+      $rol->name = strtoupper($rol->name);
+
+      $stmt->bindParam(':name', $rol->name, PDO::PARAM_STR);
       if ($stmt->execute()) {
         return array(
           "success" => true,
@@ -47,7 +49,10 @@ class RoleDaoImpl extends Model implements Repository
   public function findAll()
   {
     try {
-      $sql = "SELECT * FROM tipos_usuarios";
+      $sql = "SELECT id, name, state, created_at, CASE
+      WHEN updated_at THEN updated_at
+      ELSE 'N/A'
+      END as 'updated_at' FROM roles";
       $stmt = $this->prepareQuery($sql);
       if ($stmt->execute()) {
         if ($stmt->rowCount() > 0) {
@@ -69,7 +74,10 @@ class RoleDaoImpl extends Model implements Repository
   public function findById($id)
   {
     try {
-      $sql = "SELECT * FROM tipos_usuarios WHERE id = :id";
+      $sql = "SELECT id, name, state, created_at, CASE
+      WHEN updated_at THEN updated_at
+      ELSE 'N/A'
+      END as 'updated_at' FROM roles WHERE id = :id";
       $stmt = $this->prepareQuery($sql);
       $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
@@ -93,6 +101,29 @@ class RoleDaoImpl extends Model implements Repository
   public function update(Role $rol)
   {
     try {
+      $sql = "UPDATE roles
+                    SET name = ?, updated_at = CURRENT_TIMESTAMP()
+                    WHERE id = ? AND state = ?";
+
+      $stmt = $this->prepareQuery($sql);
+
+      $stmt->bindParam(1, $rol->name, PDO::PARAM_STR);
+      $stmt->bindParam(2, $rol->id, PDO::PARAM_INT);
+      $stmt->bindParam(3, $rol->state, PDO::PARAM_INT);
+
+      if ($stmt->execute()) {
+        if ($stmt->rowCount() > 0) {
+          return array(
+            "success" => true,
+            "msg" => 'Rol updated'
+          );
+        } else {
+          return array(
+            "success" => false,
+            "msg" => 'Error updating Rol'
+          );
+        }
+      }
     } catch (PDOException $e) {
       header('HTTP/1.1 500 Internal Server Error');
       return array(
@@ -105,7 +136,7 @@ class RoleDaoImpl extends Model implements Repository
   public function delete($id)
   {
     try {
-      $sql = "DELETE FROM tipos_usuarios WHERE id = :id";
+      $sql = "DELETE FROM roles WHERE id = :id AND state = 0";
       $stmt = $this->prepareQuery($sql);
       $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 

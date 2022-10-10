@@ -20,7 +20,7 @@ class Database
   private function __construct()
   {
     $this->host = $_ENV["DATA_BASE_HOST"] ?? "localhost:33065";
-    $this->db = $_ENV["DATA_BASE_DB"] ?? "blog-api";
+    $this->db = $_ENV["DATA_BASE_DB"] ?? "blog_react_php";
     $this->user = $_ENV["DATA_BASE_USER"] ?? "root";
     $this->pass = $_ENV["DATA_BASE_PASS"] ?? "";
     $this->charset = $_ENV["DATA_BASE_CHARSET"] ?? "utf8";

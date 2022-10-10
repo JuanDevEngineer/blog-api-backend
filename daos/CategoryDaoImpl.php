@@ -21,12 +21,12 @@ class CategoryDaoImpl extends Model implements Repository
   {
     try {
       if (!$this->validate('categoria', strtolower($category->name))) {
-        $sql = "INSERT INTO categorias (nombre, created_at)
-                VALUES(:nombre, CURRENT_TIMESTAMP())";
+        $sql = "INSERT INTO categories (name, created_at)
+                VALUES(:name, CURRENT_TIMESTAMP())";
 
         $stmt = $this->prepareQuery($sql);
 
-        $stmt->bindParam(':nombre', $category->name, PDO::PARAM_STR);
+        $stmt->bindParam(':name', $category->name, PDO::PARAM_STR);
 
         if ($stmt->execute()) {
           return array(
@@ -57,7 +57,7 @@ class CategoryDaoImpl extends Model implements Repository
   {
     try {
 
-      $sql = "SELECT id, nombre FROM categorias";
+      $sql = "SELECT id, name, created_at FROM categories";
 
       $stmt = $this->prepareQuery($sql);
 
@@ -80,7 +80,7 @@ class CategoryDaoImpl extends Model implements Repository
   public function findById($id)
   {
     try {
-      $sql = "SELECT id, nombre FROM categorias
+      $sql = "SELECT id, name, created_at FROM categories
                     WHERE id = :id";
       $stmt = $this->prepareQuery($sql);
       $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -104,8 +104,8 @@ class CategoryDaoImpl extends Model implements Repository
   public function update(Category $category)
   {
     try {
-      $sql = "UPDATE categorias
-                    SET nombre = ?, updated_at = CURRENT_TIMESTAMP()
+      $sql = "UPDATE categories
+                    SET name = ?, updated_at = CURRENT_TIMESTAMP()
                     WHERE id = ?";
 
       $stmt = $this->prepareQuery($sql);
@@ -137,8 +137,7 @@ class CategoryDaoImpl extends Model implements Repository
   public function delete($id)
   {
     try {
-      $sql = "DELETE FROM categorias
-                    WHERE id = :id";
+      $sql = "DELETE FROM categories WHERE id = :id AND state = 0";
 
       $stmt = $this->prepareQuery($sql);
       $stmt->bindParam(':id', $id, PDO::PARAM_INT);

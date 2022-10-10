@@ -39,9 +39,9 @@ class Model
         break;
 
       case 'categoria':
-        $sql = "SELECT nombre FROM categorias WHERE nombre = :nombre";
+        $sql = "SELECT name FROM categories WHERE name = :name";
         $stmt = $this->prepareQuery($sql);
-        $stmt->bindParam(':nombre', $value, PDO::PARAM_STR);
+        $stmt->bindParam(':name', $value, PDO::PARAM_STR);
         break;
 
       default:

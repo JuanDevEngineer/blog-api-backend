@@ -19,29 +19,27 @@ class BlogDaoImpl extends Model implements Repository
   public function create(Blog $blog)
   {
     try {
-
-      $sql = "INSERT INTO blog (id_categoria, titulo, slug, texto_corto, texto_largo, image_path, created_at)
-                    VALUES(:id_categoria, :titulo, :slug, :texto_corto, :texto_largo, :nombre_imagen, :fecha_creacion)";
+      $sql = "INSERT INTO blogs (category_id, title, slug, text_short, text_large, path_image, created_at)
+                    VALUES(:category_id, :title, :slug, :text_short, :text_large, :path_image, CURRENT_TIMESTAMP())";
 
       $stmt = $this->prepareQuery($sql);
 
-      $stmt->bindParam(':id_categoria', $blog->id_categoria, PDO::PARAM_INT);
-      $stmt->bindParam(':titulo', $blog->titulo, PDO::PARAM_STR);
+      $stmt->bindParam(':category_id', $blog->category_id, PDO::PARAM_INT);
+      $stmt->bindParam(':title', $blog->title, PDO::PARAM_STR);
       $stmt->bindParam(':slug', $blog->slug, PDO::PARAM_STR);
-      $stmt->bindParam(':texto_corto', $blog->texto_corto, PDO::PARAM_STR);
-      $stmt->bindParam(':texto_largo', $blog->texto_largo, PDO::PARAM_STR);
-      $stmt->bindParam(':nombre_imagen', $blog->url_imagen, PDO::PARAM_STR);
-      $stmt->bindParam(':fecha_creacion', $blog->fecha_creacion);
+      $stmt->bindParam(':text_short', $blog->text_short, PDO::PARAM_STR);
+      $stmt->bindParam(':text_large', $blog->text_large, PDO::PARAM_STR);
+      $stmt->bindParam(':path_image', $blog->path_image, PDO::PARAM_STR);
 
       if ($stmt->execute()) {
         return array(
           "success" => true,
-          "msg" => 'blog registrado'
+          "msg" => 'Blog registered'
         );
       } else {
         return array(
           "success" => false,
-          "msg" => 'error al registrar el blog'
+          "msg" => 'Error al registrar el blog'
         );
       }
     } catch (PDOException $e) {
@@ -57,14 +55,15 @@ class BlogDaoImpl extends Model implements Repository
     try {
       $sql = "SELECT
                     b.id,
-                    b.titulo,
-                    b.texto_corto,
-                    b.id_categoria,
-                    c.nombre as 'categoria',
+                    b.title,
                     b.slug,
-                    b.image_path
-                    FROM blog b
-                    INNER JOIN categorias c ON c.id = b.id_categoria";
+                    b.text_short,
+                    b.text_large,
+                    c.name as 'category',
+                    b.path_image,
+                    b.created_at
+                    FROM blogs b
+                    INNER JOIN categories c ON c.id = b.category_id";
 
       $stmt = $this->prepareQuery($sql);
 
@@ -88,14 +87,14 @@ class BlogDaoImpl extends Model implements Repository
     try {
       $sql = "SELECT
                     b.id,
-                    b.titulo,
-                    b.id_categoria,
-                    c.nombre as 'categoria',
-                    b.texto_corto,
-                    b.texto_largo,
-                    b.image_path
-                    FROM blog b
-                    INNER JOIN categorias c ON c.id = b.id_categoria
+                    b.title,
+                    b.category_id,
+                    c.name as 'category',
+                    b.text_short,
+                    b.text_large,
+                    b.path_image
+                    FROM blogs b
+                    INNER JOIN categories c ON c.id = b.category_id
                     WHERE b.id = :id";
 
       $stmt = $this->prepareQuery($sql);
@@ -119,22 +118,23 @@ class BlogDaoImpl extends Model implements Repository
   public function update(Blog $blog)
   {
     try {
-      $sql = "UPDATE blog b
+      $sql = "UPDATE blogs b
                     SET
-                    b.titulo = :titulo,
+                    b.category_id = :category_id
+                    b.title = :title,
                     b.slug = :slug,
-                    b.texto_corto = :texto_corto,
-                    b.texto_largo = :texto_largo,
-                    b.updated_at = :fecha_actualizacion
+                    b.text_short = :text_short,
+                    b.text_large = :text_large,
+                    b.updated_at = CURRENT_TIMESTAMP()
                     WHERE b.id = :id";
 
       $stmt = $this->prepareQuery($sql);
 
-      $stmt->bindParam(':titulo', $blog->titulo, PDO::PARAM_STR);
+      $stmt->bindParam(':title', $blog->titulo, PDO::PARAM_STR);
       $stmt->bindParam(':slug', $blog->slug, PDO::PARAM_STR);
-      $stmt->bindParam(':texto_corto', $blog->texto_corto, PDO::PARAM_STR);
-      $stmt->bindParam(':texto_largo', $blog->texto_largo, PDO::PARAM_STR);
-      $stmt->bindParam(':fecha_actualizacion', $blog->fecha_actualizacion);
+      $stmt->bindParam(':text_short', $blog->text_short, PDO::PARAM_STR);
+      $stmt->bindParam(':text_large', $blog->txt_large, PDO::PARAM_STR);
+      $stmt->bindParam(':category_id', $blog->category_id, PDO::PARAM_INT);
       $stmt->bindParam(':id', $blog->id, PDO::PARAM_INT);
 
       if ($stmt->execute()) {
@@ -161,7 +161,7 @@ class BlogDaoImpl extends Model implements Repository
   public function delete($id)
   {
     try {
-      $sql = "DELETE FROM blog WHERE id = :id";
+      $sql = "DELETE FROM blogs WHERE id = :id AND state = 0";
 
       $stmt = $this->prepareQuery($sql);
       $stmt->bindParam(':id', $id, PDO::PARAM_INT);

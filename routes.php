@@ -59,6 +59,15 @@ $router->get('/api/users/{id}', 'UserController@findById');
 $router->put('/api/users/{id}/update', 'UserController@update');
 $router->delete('/api/users/{id}/delete', 'UserController@delete');
 
+/**
+ * Routes Users
+ */
+$router->post('/api/roles', 'RoleController@create');
+$router->get('/api/roles', 'RoleController@findAll');
+$router->get('/api/roles/{id}', 'RoleController@findById');
+$router->put('/api/roles/{id}/update', 'RoleController@update');
+$router->delete('/api/roles/{id}/delete', 'RoleController@delete');
+
 /**                                                     
  * *****************************************************
  * *****************************************************

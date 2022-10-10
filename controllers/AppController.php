@@ -2,43 +2,47 @@
 
 namespace Controllers;
 
-use ArrayObject;
-
 class AppController
 {
+
+  protected static $request;
+
   public function __construct()
   {
+    self::$request = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : '';
   }
 
-  protected function validateFormatImage($file)
+  public function acceptsJson()
   {
-    $flag = false;
-    $type = array('image/gif', 'image/jpeg', 'image/jpg', 'image/png');
-
-    if (in_array($file, $type)) {
-      $flag = true;
+    if (strtolower(self::$request) == 'application/json') {
+      return true;
     }
-    return $flag;
+    return false;
   }
 
-  protected function validatePassword($passwordRequest, $hash)
+  protected function validateFormatImage($file, $formats = array('image/gif', 'image/jpeg', 'image/jpg', 'image/png')): bool
+  {
+    return (in_array($file, $formats));
+  }
+
+  protected function validatePassword($passwordRequest, $hash): bool
   {
     return password_verify($passwordRequest, $hash);
   }
 
-  public function validateSize($fileSize)
+  public function validateSize($fileSize): bool
   {
-    $flag = false;
-
-    if ($fileSize < 10000000) {
-      $flag = true;
-    }
-    return $flag;
+    return $fileSize < 10000000;
   }
 
   public function request()
   {
     return json_decode(file_get_contents('php://input'), true);
+  }
+
+  public function allowRequestMethod($method = 'GET')
+  {
+    return ($_SERVER['REQUEST_METHOD'] == $method);
   }
 
   public function methodAllowed()
@@ -75,12 +79,15 @@ class AppController
 
   public function methodOk($message = "", $data = NULL)
   {
+
+    // var_dump($data);
+    // exit;
     header('HTTP/1.1 200 ok');
     return json_encode(array(
       'status' => http_response_code(200),
       'msg' => $message,
       'success' => true,
-      'data' => $data ? $data : NULL
+      'data' => $data ?? NULL
     ));
   }
 
@@ -91,7 +98,7 @@ class AppController
       'status' => http_response_code(201),
       'msg' => $message,
       'success' => true,
-      'data' => $data ? $data : NULL
+      'data' => $data ?? NULL
     ));
   }
 
@@ -102,7 +109,7 @@ class AppController
       'status' => http_response_code(500),
       'msg' => $message,
       'success' => false,
-      'data' => $data ? $data : NULL
+      'data' => $data ?? NULL
     ));
   }
 }

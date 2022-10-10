@@ -67,6 +67,28 @@ class RoleController extends AppController
     }
   }
 
+  public function update($id)
+  {
+    if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+      $data = $this->request();
+
+      $role = new Role();
+      $role->name = $data['name'];
+      $role->state = $data['state'];
+      $role->id = $id;
+
+      $response = $this->rolService->update($role);
+
+      if ($response['success']) {
+        echo $this->methodOk($response['msg']);
+      } else {
+        echo $this->methodBadRequest($response['msg']);
+      }
+    } else {
+      echo $this->methodAllowed();
+    }
+  }
+
   public function delete($id)
   {
     if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
