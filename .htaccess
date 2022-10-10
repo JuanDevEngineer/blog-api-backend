@@ -17,13 +17,3 @@
     RewriteRule ^(.*)$ index.php [L,QSA]
     
 </IfModule>
-
-# 4025158 ->
-# 018000936666 ->
-
-# 01 8000 912345 -> 
-# 5109000 604 -> medellin
-
-# fecha de corte -> 30/ -> fecha de corte
-# fecha de corte -> 15/ -> fecha de pago
-# fecha de corte -> 16/ -> facturacion (1 al 29)
