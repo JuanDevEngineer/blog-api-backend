@@ -77,11 +77,19 @@ class AppController
     ));
   }
 
+  public function methodUnauthorized($message = "")
+  {
+    header('HTTP/1.1 401 Unauthorized');
+    return json_encode(array(
+      'status' => http_response_code(401),
+      'msg' => $message,
+      'success' => false,
+      'data' => NULL
+    ));
+  }
+
   public function methodOk($message = "", $data = NULL)
   {
-
-    // var_dump($data);
-    // exit;
     header('HTTP/1.1 200 ok');
     return json_encode(array(
       'status' => http_response_code(200),

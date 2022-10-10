@@ -2,11 +2,7 @@
 
 namespace Services;
 
-// date_default_timezone_set('America/Bogota');
-// require '../vendor/autoload.php';
-
-// load variables enviroment
-
+use Controllers\AppController;
 use UnexpectedValueException;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -17,11 +13,13 @@ use Firebase\JWT\SignatureInvalidException;
 class JwtService
 {
   private $idUser;
+  private $reponse;
   private $privateKey;
 
-  public function __construct($id)
+  public function __construct($id = NULL)
   {
     $this->idUser = $id;
+    $this->reponse = new AppController();
     $this->privateKey = $_ENV['SECRET_KEY_PRIVATE'] ?? 'h7I1u;i9!Fs5fdtE9#Bi9!MEVV=3~kxZEi2!F4E#.{O1DN!3JV';
   }
 
@@ -29,7 +27,8 @@ class JwtService
   {
     try {
       $issuedAt = time();
-      $expirationTime = $issuedAt + (60 * 60);
+      // $expirationTime = $issuedAt + (60 * 60);
+      $expirationTime = $issuedAt + 60; // jwt valid for 60 seconds from the issued time
 
       $payload = [
         'sub' => $this->idUser,
@@ -46,63 +45,24 @@ class JwtService
     return $jwt;
   }
 
-  public function decodeToken($token)
+  public function verifyToken()
   {
-    // if (!array_key_exists('HTTP_AUTHORIZATION', $_SERVER)) {
-    //   http_response_code(401);
-    //   die;
-    // }
-
-    // if (!preg_match('/Bearer\s(\S+)/', $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
-    //   header('HTTP/1.0 400 Bad Request');
-    //   echo 'Token not found in request';
-    //   exit;
-    // }
-
-    // $jwt = $matches[1];
-    // if (!$jwt) {
-    //   // No token was able to be extracted from the authorization header
-    //   header('HTTP/1.0 400 Bad Request');
-    //   exit;
-    // };
-
-    // $secret_Key  = 'ENTER_SECRET_KEY_HERE';
-    // $token = JWT::decode($jwt, $secret_Key, ['HS512']);
-    // $now = new DateTimeImmutable();
-    // $serverName = "your.domain.name";
-
-    // if (
-    //   $token->iss !== $serverName ||
-    //   $token->nbf > $now->getTimestamp() ||
-    //   $token->exp < $now->getTimestamp()
-    // ) {
-    //   header('HTTP/1.1 401 Unauthorized');
-    //   exit;
-    // }
-
-    // $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
-    // $arr = explode(" ", $authHeader);
-    // $jwt = $arr[1];
-    $decoded = null;
-    // if ($jwt) {
+    $matches = explode(' ', $_SERVER['HTTP_AUTHORIZATION']);
+    $token = $matches[1];
     try {
       JWT::decode($token, new Key($this->privateKey, 'HS256'));
     } catch (\Exception $e) {
-      if ($e instanceof UnexpectedValueException) {
-        echo "entrando";
-        die();
-      }
 
       if ($e instanceof BeforeValidException) {
-        echo "entrando";
+        echo $this->reponse->methodUnauthorized("Before validation error");
         die();
       }
       if ($e instanceof ExpiredException) {
-        echo "entrando en expiración";
+        echo $this->reponse->methodUnauthorized("Token has been expired");
         die();
       }
       if ($e instanceof SignatureInvalidException) {
-        echo "entrando en token invalido";
+        echo $this->reponse->methodBadRequest("Token malformed");
         die();
       }
 
@@ -113,5 +73,10 @@ class JwtService
   public static function getToken()
   {
     return isset($_SERVER['HTTP_AUTHORIZATION']);
+  }
+
+  public static function existHeaderAutorization()
+  {
+    return !array_key_exists('HTTP_AUTHORIZATION', $_SERVER);
   }
 }

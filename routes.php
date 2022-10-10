@@ -1,6 +1,7 @@
 <?php
 
 use \Bramus\Router\Router;
+use Controllers\AppController;
 use \Services\JwtService;
 
 // send some CORS headers so the API can be called from anywhere
@@ -24,13 +25,18 @@ $router->post('/auth/sign-in', 'AuthController@login');
 $router->post('/auth/sign-up', 'AuthController@register');
 
 // Define routes middleware
-// $router->before('GET|POST|PUT|PATCH|DELETE', '/api/.*', function () {
-//   header('Content-Type: application/json');
-//   if (JwtService::getToken() == NULL || JwtService::getToken() == "") {
-//     echo "Token not found in request";
-//     die();
-//   }
-// });
+$router->before('GET|POST|PUT|PATCH|DELETE', '/api/.*', function () {
+  header('Content-Type: application/json');
+  $response = new AppController();
+
+  if (JwtService::getToken() == NULL) {
+    echo $response->methodUnauthorized("Token not found in request");
+    die();
+  }
+
+  $token = new JwtService();
+  $token->verifyToken();
+});
 
 /**
  * Routes Blogs
