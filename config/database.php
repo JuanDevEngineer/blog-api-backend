@@ -55,10 +55,3 @@ class Database
     return $this->connection;
   }
 }
-
-
-// $this->host = $_ENV["DATA_BASE_HOST"] ?? "us-cdbr-east-03.cleardb.com:3306";
-// $this->db = $_ENV["DATA_BASE_DB"] ?? "heroku_63dae8056924b5f";
-// $this->user = $_ENV["DATA_BASE_USER"] ?? "ba4e338b01b472";
-// $this->pass = $_ENV["DATA_BASE_PASS"] ?? "36bb9295";
-// $this->charset = $_ENV["DATA_BASE_CHARSET"] ?? "utf8";
