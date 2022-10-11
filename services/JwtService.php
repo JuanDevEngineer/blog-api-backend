@@ -27,8 +27,8 @@ class JwtService
   {
     try {
       $issuedAt = time();
-      // $expirationTime = $issuedAt + (60 * 60);
-      $expirationTime = $issuedAt + 60; // jwt valid for 60 seconds from the issued time
+      $expirationTime = $issuedAt + (60 * 60);
+      // $expirationTime = $issuedAt + 60; // jwt valid for 60 seconds from the issued time
 
       $payload = [
         'sub' => $this->idUser,
@@ -52,7 +52,6 @@ class JwtService
     try {
       JWT::decode($token, new Key($this->privateKey, 'HS256'));
     } catch (\Exception $e) {
-
       if ($e instanceof BeforeValidException) {
         echo $this->reponse->methodUnauthorized("Before validation error");
         die();
@@ -66,7 +65,8 @@ class JwtService
         die();
       }
 
-      echo $e->getMessage();
+      echo $this->reponse->methodBadRequest($e->getMessage());
+      die();
     }
   }
 
