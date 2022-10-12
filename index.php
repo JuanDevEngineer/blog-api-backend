@@ -1,8 +1,13 @@
 <?php
 
-require_once ('vendor/autoload.php');
+// define set timezone
+date_default_timezone_set('America/Bogota');
 
-require_once 'libs/core.php';
-require_once 'config/database.php';
+// Require composer autoloader
+require __DIR__ . '/vendor/autoload.php';
 
-$app = new Core();
+// load variables enviroment
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+require_once('routes.php');

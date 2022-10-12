@@ -1,2 +1,5 @@
-vendor/
-uploads/
+vendor
+public/uploads/
+
+.env
+*.sql

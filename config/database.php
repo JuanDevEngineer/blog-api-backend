@@ -1,30 +1,57 @@
 <?php
 
-class Database {
+namespace Config;
 
-        private $host = "us-cdbr-east-03.cleardb.com:3306";
-        private $db = "heroku_63dae8056924b5f";
-        private $user = "ba4e338b01b472";
-        private $password = "36bb9295";
-        private $charset = "utf8";
+use PDO;
 
-    public function __construct(){}
+class Database
+{
+  private $host;
+  private $db;
+  private $user;
+  private $pass;
+  private $charset;
+  private $opt = NULL;
+  private $dsn = NULL;
+  private $connection = NULL;
+  private static $database = NULL;
 
-    public function connect() {
-        try {
-            // dato de conexion
-            $connection = "mysql:host=" . $this->host . ";dbname=" . $this->db . ";charset=" . $this->charset;
-            
-            //opciones de conexion
-            $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ERRMODE_EXCEPTION];
+  /* Private construct that can only be accessed from within this class */
+  private function __construct()
+  {
+    $this->host = $_ENV["DATA_BASE_HOST"] ?? "localhost:33065";
+    $this->db = $_ENV["DATA_BASE_DB"] ?? "blog_react_php";
+    $this->user = $_ENV["DATA_BASE_USER"] ?? "root";
+    $this->pass = $_ENV["DATA_BASE_PASS"] ?? "";
+    $this->charset = $_ENV["DATA_BASE_CHARSET"] ?? "utf8";
 
-            $pdo = new PDO($connection, $this->user, $this->password, $options);
+    $this->createConnection();
+  }
 
-            return $pdo;
+  private function createConnection(): void
+  {
+    $this->dsn = "mysql:host=$this->host;dbname=$this->db;charset=$this->charset";
+    $this->opt = [
+      PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+      PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+      PDO::ATTR_EMULATE_PREPARES => false,
+    ];
 
-        } catch (PDOException $e) {
-            $e->getMessage();
-        }
+    $this->connection = new PDO($this->dsn, $this->user, $this->pass, $this->opt);
+  }
+
+  /* A static method that will create an object instance once and after that it will reuse the same instance for all other requests */
+  public static function getInstance(): Database
+  {
+    if (self::$database == NULL) {
+      self::$database = new Database();
     }
+    return self::$database;
+  }
 
+  /* A little getter function to access the connection object */
+  public function getPool(): PDO
+  {
+    return $this->connection;
+  }
 }
