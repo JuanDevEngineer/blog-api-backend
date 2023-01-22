@@ -2,19 +2,19 @@
 
 namespace Services;
 
-use Daos\UserDaoImpl;
+use Daos\IUser;
 use Models\User;
 
 class UserService
 {
-  private $daoUser;
+  private IUser $daoUser;
 
-  public function __construct()
+  public function __construct(IUser $user)
   {
-    $this->daoUser = new UserDaoImpl();
+    $this->daoUser = $user;
   }
 
-  public function create(User $user)
+  public function create(User $user): array
   {
     return $this->daoUser->create($user);
   }
@@ -34,7 +34,7 @@ class UserService
     return $this->daoUser->findByEmail($user);
   }
 
-  public function existUser(User $user)
+  public function existUser(User $user): bool|array
   {
     return $this->daoUser->existUser($user);
   }

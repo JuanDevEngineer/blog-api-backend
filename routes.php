@@ -29,7 +29,7 @@ $router->before('GET|POST|PUT|PATCH|DELETE', '/api/.*', function () {
   header('Content-Type: application/json');
   $response = new AppController();
 
-  if (JwtService::getToken() == NULL || JwtService::existHeaderAutorization()) {
+  if (JwtService::getToken() == NULL || JwtService::existHeaderAuthorization()) {
     echo $response->methodUnauthorized("Token not found in request");
     die();
   }

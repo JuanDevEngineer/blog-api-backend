@@ -5,19 +5,18 @@ namespace Daos;
 use PDO;
 use PDOException;
 
-use Daos\Repository;
 use Models\Model;
 use Models\Role;
 
 
-class RoleDaoImpl extends Model implements Repository
+class RoleDao extends Model implements IRole
 {
   public function __construct()
   {
     parent::__construct();
   }
 
-  public function create(Role $rol)
+  public function create(Role $rol): array
   {
     try {
       $sql = "INSERT INTO roles(name, created_at) VALUES(:name, CURRENT_TIMESTAMP())";
@@ -56,8 +55,7 @@ class RoleDaoImpl extends Model implements Repository
       $stmt = $this->prepareQuery($sql);
       if ($stmt->execute()) {
         if ($stmt->rowCount() > 0) {
-          $data = $stmt->fetchAll();
-          return $data;
+	        return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
           return array();
         }
@@ -83,8 +81,7 @@ class RoleDaoImpl extends Model implements Repository
 
       if ($stmt->execute()) {
         if ($stmt->rowCount() > 0) {
-          $data = $stmt->fetch();
-          return $data;
+	        return $stmt->fetch(PDO::FETCH_ASSOC);
         } else {
           return array();
         }

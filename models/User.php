@@ -4,7 +4,7 @@ namespace Models;
 
 class User
 {
-  private $attributes = array();
+  private array $attributes = array();
 
   public function __construct()
   {

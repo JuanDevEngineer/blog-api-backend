@@ -1,15 +1,15 @@
 {
   "name": "juandev/blog",
-  "description": "prueba tecnica",
+  "description": "personal project",
   "minimum-stability": "dev",
   "require": {
     "bramus/router": "~1.6",
     "vlucas/phpdotenv": "5.4.x-dev",
-    "firebase/php-jwt": "9999999-dev"
+    "firebase/php-jwt": "9999999-dev",
+    "ext-pdo": "*"
   },
   "autoload": {
     "psr-4": {
-      "Auth\\": "./auth/",
       "Config\\": "./config/",
       "Controllers\\": "./controllers/",
       "Models\\": "./models/",

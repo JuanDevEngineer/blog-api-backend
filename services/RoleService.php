@@ -2,19 +2,20 @@
 
 namespace Services;
 
-use Daos\RoleDaoImpl;
+use Daos\IRole;
+use Daos\RoleDao;
 use Models\Role;
 
 class RoleService
 {
-  private $roleDao;
+  private RoleDao $roleDao;
 
-  public function __construct()
+  public function __construct(IRole $role)
   {
-    $this->roleDao = new RoleDaoImpl();
+    $this->roleDao = $role;
   }
 
-  public function create(Role $rol)
+  public function create(Role $rol): array
   {
     return $this->roleDao->create($rol);
   }
@@ -29,12 +30,12 @@ class RoleService
     return $this->roleDao->findById($id);
   }
 
-  public function update(Role $rol)
+  public function update(Role $rol): ?array
   {
     return $this->roleDao->update($rol);
   }
 
-  public function delete($id)
+  public function delete($id): ?array
   {
     return $this->roleDao->delete($id);
   }

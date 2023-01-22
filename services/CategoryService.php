@@ -2,19 +2,20 @@
 
 namespace Services;
 
-use Daos\CategoryDaoImpl;
+use Daos\CategoryDao;
+use Daos\ICategory;
 use Models\Category;
 
 class CategoryService
 {
-  private $categoryDao;
+  private CategoryDao $categoryDao;
 
-  public function __construct()
+  public function __construct(ICategory $category)
   {
-    $this->categoryDao = new CategoryDaoImpl();
+    $this->categoryDao = $category;
   }
 
-  public function create(Category $category)
+  public function create(Category $category): array
   {
     return $this->categoryDao->create($category);
   }
@@ -29,12 +30,12 @@ class CategoryService
     return $this->categoryDao->findById($id);
   }
 
-  public function update(Category $category)
+  public function update(Category $category): ?array
   {
     return $this->categoryDao->update($category);
   }
 
-  public function delete($id)
+  public function delete($id): ?array
   {
     return $this->categoryDao->delete($id);
   }

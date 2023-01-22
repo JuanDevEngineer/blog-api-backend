@@ -5,18 +5,17 @@ namespace Daos;
 use PDO;
 use PDOException;
 
-use Daos\Repository;
 use Models\Blog;
 use Models\Model;
 
-class BlogDaoImpl extends Model implements Repository
+class BlogDao extends Model implements IBlog
 {
   public function __construct()
   {
     parent::__construct();
   }
 
-  public function create(Blog $blog)
+  public function create(Blog $blog): array
   {
     try {
       $sql = "INSERT INTO blogs (category_id, title, slug, text_short, text_large, path_image, created_at)
@@ -69,8 +68,7 @@ class BlogDaoImpl extends Model implements Repository
 
       if ($stmt->execute()) {
         if ($stmt->rowCount() > 0) {
-          $data = $stmt->fetchAll();
-          return $data;
+	        return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
           return array();
         }
@@ -102,8 +100,7 @@ class BlogDaoImpl extends Model implements Repository
 
       if ($stmt->execute()) {
         if ($stmt->rowCount() > 0) {
-          $data = $stmt->fetch();
-          return $data;
+	        return $stmt->fetch(PDO::FETCH_ASSOC);
         } else {
           return array();
         }

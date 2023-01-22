@@ -7,31 +7,31 @@ use Config\Database;
 
 class Model
 {
-  protected $db;
+  protected Database $db;
 
   public function __construct()
   {
     $this->db = Database::getInstance();
   }
 
-  public function prepareQuery($sql)
+  public function prepareQuery($sql): bool|\PDOStatement
   {
     return $this->db->getPool()->prepare($sql);
   }
 
-  public function hashPassword($password)
+  public function hashPassword($password): string
   {
     return password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
   }
 
-  public function validatePassword($password, $passwordData)
+  public function validatePassword($password, $passwordData): bool
   {
     return password_verify($password, $passwordData);
   }
 
-  public function validate($dato, $value)
+  public function validate($data, $value): bool
   {
-    switch ($dato) {
+    switch ($data) {
       case 'usuario':
         $sql = "SELECT * FROM users WHERE email = :email";
         $stmt = $this->prepareQuery($sql);

@@ -4,7 +4,7 @@ namespace Models;
 
 class Category
 {
-  private $attributes = array();
+  private array $attributes = array();
 
   public function __construct()
   {

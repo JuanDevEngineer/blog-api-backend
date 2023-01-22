@@ -5,11 +5,10 @@ namespace Daos;
 use PDO;
 use PDOException;
 
-use Daos\Repository;
 use Models\Category;
 use Models\Model;
 
-class CategoryDaoImpl extends Model implements Repository
+class CategoryDao extends Model implements ICategory
 {
 
   public function __construct()
@@ -17,7 +16,7 @@ class CategoryDaoImpl extends Model implements Repository
     parent::__construct();
   }
 
-  public function create(Category $category)
+  public function create(Category $category): array
   {
     try {
       if (!$this->validate('categoria', strtolower($category->name))) {
@@ -63,8 +62,7 @@ class CategoryDaoImpl extends Model implements Repository
 
       if ($stmt->execute()) {
         if ($stmt->rowCount() > 0) {
-          $data = $stmt->fetchAll();
-          return $data;
+	        return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
           return array();
         }
@@ -87,8 +85,7 @@ class CategoryDaoImpl extends Model implements Repository
 
       if ($stmt->execute()) {
         if ($stmt->rowCount() > 0) {
-          $data = $stmt->fetch();
-          return $data;
+	        return $stmt->fetch(PDO::FETCH_ASSOC);
         } else {
           return array();
         }

@@ -2,24 +2,25 @@
 
 namespace Services;
 
+use Daos\IBlog;
 use Models\Blog;
-use Daos\BlogDaoImpl;
+use Daos\BlogDao;
 
 class BlogService
 {
-  private $blogDao;
+  private BlogDao $blogDao;
 
-  public function __construct()
+  public function __construct(IBlog $blog)
   {
-    $this->blogDao = new BlogDaoImpl();
+    $this->blogDao = $blog;
   }
 
-  public function create(Blog $blog)
+  public function create(Blog $blog): array
   {
     return $this->blogDao->create($blog);
   }
 
-  public function findAll()
+  public function findAll(): bool|array|null
   {
     return $this->blogDao->findAll();
   }
@@ -29,12 +30,12 @@ class BlogService
     return $this->blogDao->findById($id);
   }
 
-  public function update(Blog $blog)
+  public function update(Blog $blog): ?array
   {
     return $this->blogDao->update($blog);
   }
 
-  public function delete($id)
+  public function delete($id): ?array
   {
     return $this->blogDao->delete($id);
   }
