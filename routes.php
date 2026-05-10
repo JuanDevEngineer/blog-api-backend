@@ -56,9 +56,9 @@ use App\Application\UseCases\Role\FindRoleByIdUseCase;
 use App\Application\UseCases\Role\UpdateRoleUseCase;
 
 // ── CORS ──────────────────────────────────────────────────────────────────────
-$origins = '';
+$origins = '*';
 
-header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Origin: '.$origins);
 header('Content-Type: application/json; charset=UTF-8');
 header('Access-Control-Allow-Methods: OPTIONS, GET, POST, PUT, PATCH, DELETE');
 header('Access-Control-Max-Age: 3600');
