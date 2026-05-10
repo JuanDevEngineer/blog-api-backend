@@ -10,12 +10,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Config\\": "./config/",
-      "Controllers\\": "./controllers/",
-      "Models\\": "./models/",
-      "Daos\\": "./daos/",
-      "Services\\": "./services/",
-      "App\\": "./"
+      "App\\": "src/"
     }
   }
 }
